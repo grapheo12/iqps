@@ -1,5 +1,7 @@
+@import url(//fonts.googleapis.com/css?family=Inter);
+
 body{
-    font-family: Roboto;
+    font-family: 'Inter';
 }
 
 #search-box{
