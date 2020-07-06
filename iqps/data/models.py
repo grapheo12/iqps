@@ -1,4 +1,10 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from utils.timeutil import current_year
+
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value)
 
 PAPER_TYPES = [
     ('MA', "Mid-Autumn"),
@@ -31,7 +37,8 @@ class Paper(models.Model):
     link = models.CharField(max_length=2048)
     subject = models.CharField(max_length=500)
     paper_type = models.CharField(max_length=2, choices=PAPER_TYPES)
-    year = models.IntegerField()
+    year = models.IntegerField(validators=[MinValueValidator(1951),
+                                           max_value_current_year])
     added_on = models.DateTimeField(auto_now_add=True)
 
     keywords = models.ManyToManyField(Keyword, blank=True, related_name="papers")
