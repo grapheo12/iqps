@@ -1,4 +1,7 @@
 import logging
+
+from captcha.fields import CaptchaField
+from data.models import Keyword, Paper
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
@@ -81,7 +84,7 @@ class UploadForm(forms.ModelForm):
         widgets = {
             'keywords': KeywordSelect2TagWidget,
             'department': Select2Widget
-            }
+        }
         labels = {
             'department': 'Department (Prefer 2 letter codes. \
                           Select Others if not found)'

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import os.path
+
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join('conf', 'app.env'))
@@ -30,11 +31,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = True if os.environ.get("MODE", "dev") == "dev" else False
 
 ALLOWED_HOSTS = [
-        "localhost",
-        "127.0.0.1",
-        "0.0.0.0",
-        os.environ.get("CNAME", ".ngrok.io")
-    ]
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    os.environ.get("CNAME", ".ngrok.io")
+]
 
 
 # Application definition
@@ -173,5 +174,3 @@ LOGGING = {
         }
     }
 }
-
-

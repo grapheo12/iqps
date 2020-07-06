@@ -1,4 +1,5 @@
 import sqlite3
+
 from fuzzywuzzy import fuzz
 
 
@@ -18,8 +19,8 @@ class SearchCursor:
 
     def __enter__(self):
         self.connection = sqlite3.connect(self.db_name)
-        self.connection.create_function("SIMILARITYSCORE", 2,
-                                        self._similarityScore)
+        self.connection.create_function(
+            "SIMILARITYSCORE", 2, self._similarityScore)
         self.cursor = self.connection.cursor()
 
         return self.cursor

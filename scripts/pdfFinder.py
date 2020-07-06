@@ -1,12 +1,15 @@
 import argparse
-from collections import deque, namedtuple
 import json
 import re
-import requests
+from collections import deque, namedtuple
 from urllib.parse import urlparse
+
+import requests
+
 from bs4 import BeautifulSoup
 
 Node = namedtuple("Node", ["link", "parent", "grandparent"])
+
 
 def pdf_bfs(start, exclude=[]):
     q = deque()
@@ -18,7 +21,7 @@ def pdf_bfs(start, exclude=[]):
     if start[-4:] == ".pdf":
         print("Provide a non-pdf link to start with.")
         return start
-    
+
     q.append(start)
     q_node.append(Node(start, None, None))
 
@@ -38,10 +41,10 @@ def pdf_bfs(start, exclude=[]):
 
             a = soup.find_all('a')
             print("Retrieved links")
-            children = [b.get('href') 
-            for b in a if b.text.lower() not in exclude
-            and b.get('href') not in visited
-            and baseurl + b.get('href') not in visited]
+            children = [b.get('href')
+                        for b in a if b.text.lower() not in exclude
+                        and b.get('href') not in visited
+                        and baseurl + b.get('href') not in visited]
 
             for child in children:
                 print("     ", child)
@@ -51,28 +54,30 @@ def pdf_bfs(start, exclude=[]):
                 else:
                     q.append(child)
                     q_node.append(Node(child, link, link_obj.parent))
-            
+
             visited[link] = "page"
-            visited_node[link_obj] = "page"           
+            visited_node[link_obj] = "page"
         except KeyboardInterrupt:
             break
-        except:
+        except Exception:
             print("Found bad link")
             visited[link] = "bad"
             visited_node[link_obj] = "page"
 
     return visited_node
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("start_link", help="Url as the start point for searching")
+    parser.add_argument(
+        "start_link", help="Url as the start point for searching")
     parser.add_argument("json_dump", help="Location of json file to write")
     args = parser.parse_args()
-    
-    #In case of further changes in the site structure:
-    #All hardcoding is to be done this point onwards.
-    #Or most probably in the if checking of Line 24
-    
+
+    # In case of further changes in the site structure:
+    # All hardcoding is to be done this point onwards.
+    # Or most probably in the if checking of Line 24
+
     EXCLUDE = [
         "click here for e-books",
         "search e-books click here",
@@ -110,14 +115,14 @@ if __name__ == "__main__":
 
     data = []
     uncategorized = []
-    
+
     p = urlparse(args.start_link)
     baseurl = p.scheme + "://" + p.netloc
 
     filename_regex = r"[A-Z]{2}.+_[MS|ES|MA|EA]{2}_[0-9]{4}"
     matcher = re.compile(filename_regex)
 
-    counter = 0    
+    counter = 0
     for key in result:
         if result[key] == "pdf":
             name = key.link.split("/")[-1][:-4]
@@ -126,15 +131,15 @@ if __name__ == "__main__":
                 blocks = name.split("_")
 
                 fileblock = {
-                    "Department" : blocks[0][:2],
-                    "Link" : baseurl + key.link,
-                    "Paper" : " ".join(blocks[1: -2]),
-                    "Semester" : blocks[-2],
-                    "Year" : blocks[-1] 
+                    "Department": blocks[0][:2],
+                    "Link": baseurl + key.link,
+                    "Paper": " ".join(blocks[1: -2]),
+                    "Semester": blocks[-2],
+                    "Year": blocks[-1]
                 }
 
                 data.append(fileblock)
-            except:
+            except Exception:
                 gp = key.grandparent.split("/")[-1]
                 name = key.link.split("/")[-1][:-4]
                 fileblock = {
@@ -154,7 +159,7 @@ if __name__ == "__main__":
                 elif "_EA_" in key.link:
                     fileblock['Semester'] = 'EA'
 
-                uncategorized.append(fileblock)                    
+                uncategorized.append(fileblock)
             finally:
                 counter += 1
 
@@ -177,4 +182,4 @@ if __name__ == "__main__":
         json.dump(final_data, fpath, indent=1)
         fpath.close()
 
-    print("Total entries in file =", len(final_data))        
+    print("Total entries in file =", len(final_data))

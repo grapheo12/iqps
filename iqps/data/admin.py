@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Paper, Keyword, Department
+from .models import Department, Keyword, Paper
+
 
 
 class PaperAdmin(admin.ModelAdmin):

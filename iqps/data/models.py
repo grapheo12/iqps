@@ -45,8 +45,8 @@ class Paper(models.Model):
                                            max_value_current_year])
     added_on = models.DateTimeField(auto_now_add=True)
 
-    keywords = models.ManyToManyField(Keyword, blank=True,
-                                      related_name="papers")
+    keywords = models.ManyToManyField(
+        Keyword, blank=True, related_name="papers")
 
     class Meta:
         db_table = 'papers'

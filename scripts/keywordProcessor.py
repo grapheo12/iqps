@@ -1,15 +1,17 @@
-import json
 import fcntl
+import json
 import os
 import string
-from pdf2image import convert_from_path
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.corpus import stopwords
-from nltk import word_tokenize
+
 import pytesseract
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+from pdf2image import convert_from_path
 from PIL import Image
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 CORPUS = []
+
 
 def load_corpus():
     global CORPUS
@@ -28,6 +30,7 @@ def load_corpus():
                 json.dump(CORPUS, f)
                 os.fsync(f.fileno())
                 fcntl.lockf(f, fcntl.LOCK_UN)
+
 
 def append_corpus(new_corpus):
     """
@@ -50,6 +53,7 @@ def append_corpus(new_corpus):
             os.fsync(f.fileno())
             fcntl.lockf(f, fcntl.LOCK_UN)
 
+
 def extract_text(path):
     """
     Takes the pdf file from fpath and extracts text from it.
@@ -59,7 +63,8 @@ def extract_text(path):
     for page in pages:
         text += str(pytesseract.image_to_string(page))
     return text
-    
+
+
 def extract_keyword(text, dry_run=False, commit=True):
     load_corpus()
 
@@ -69,9 +74,9 @@ def extract_keyword(text, dry_run=False, commit=True):
     text = word_tokenize(text)
     stoppers = set(stopwords.words('english'))
     text = " ".join([w for w in text if w not in stoppers])
-        
+
     CORPUS.append(text)
-    
+
     if commit:
         append_corpus([text])
     if not dry_run:
@@ -91,5 +96,3 @@ def extract_keyword(text, dry_run=False, commit=True):
         return keywords
     else:
         return []
-
-

@@ -1,10 +1,12 @@
 from __future__ import print_function
-import pickle
+
 import os.path
+import pickle
+
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 
 # Source: Google Drive API Python Quickstart
 

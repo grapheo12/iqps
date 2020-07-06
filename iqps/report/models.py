@@ -1,5 +1,5 @@
-from django.db import models
 from data.models import Paper
+from django.db import models
 
 
 class Report(models.Model):

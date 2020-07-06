@@ -1,22 +1,24 @@
 import json
 import logging
-import uuid
 import os
-from django.shortcuts import render
-# from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+import uuid
 
-from data.models import Paper, Department
+from data.models import Department, Keyword, Paper
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from iqps.settings import GDRIVE_DIRNAME, STATICFILES_DIRS
 from request.models import PaperRequest
-from iqps.settings import STATICFILES_DIRS, GDRIVE_DIRNAME
+
 from .forms import BulkUploadForm, UploadForm
-from .google_connect import upload_file, get_or_create_folder
+from .google_connect import get_or_create_folder, upload_file
 
 GDRIVE_DIR_ID = None
 LOG = logging.getLogger(__name__)
 
-
 # @login_required
+
+
 def index(request):
     global GDRIVE_DIR_ID
 
@@ -36,8 +38,8 @@ def index(request):
                     for chunk in file.chunks():
                         dest.write(chunk)
                 if not GDRIVE_DIR_ID:
-                    GDRIVE_DIR_ID = get_or_create_folder(GDRIVE_DIRNAME,
-                                                         public=True)
+                    GDRIVE_DIR_ID = get_or_create_folder(
+                        GDRIVE_DIRNAME, public=True)
                 paper = upl.save(commit=False)
                 paper.link = upload_file(path, "{}.pdf".format(uid),
                                          folderId=GDRIVE_DIR_ID)

@@ -1,7 +1,9 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib import messages
-from .forms import ReportForm
 from data.models import Paper
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, render
+
+from .forms import ReportForm
+
 
 
 def reportPaper(request, paperId):

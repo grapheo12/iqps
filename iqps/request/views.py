@@ -1,7 +1,7 @@
 import logging
 
-from django.shortcuts import render
 from django.contrib import messages
+from django.shortcuts import render
 
 from .forms import RequestForm
 from .models import PaperRequest
