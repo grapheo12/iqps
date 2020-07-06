@@ -1,5 +1,6 @@
-from data.models import Paper
 from django.db import models
+
+from data.models import Paper
 
 
 class Report(models.Model):

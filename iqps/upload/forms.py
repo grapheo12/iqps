@@ -1,13 +1,14 @@
 import logging
 
 from captcha.fields import CaptchaField
-from data.models import Keyword, Paper
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
 
 from data.models import Paper, Keyword
 from utils.timeutil import current_year
+
+from data.models import Keyword, Paper
 
 LOG = logging.getLogger(__name__)
 

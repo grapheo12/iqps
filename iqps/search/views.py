@@ -1,6 +1,7 @@
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
+
 from iqps.settings import DATABASES
 from .processors import SearchCursor
 

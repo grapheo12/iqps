@@ -5,7 +5,6 @@ from collections import deque, namedtuple
 from urllib.parse import urlparse
 
 import requests
-
 from bs4 import BeautifulSoup
 
 Node = namedtuple("Node", ["link", "parent", "grandparent"])

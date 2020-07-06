@@ -1,5 +1,6 @@
-from data.models import PAPER_TYPES
 from django.db import models
+
+from data.models import PAPER_TYPES
 
 
 

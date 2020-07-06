@@ -1,4 +1,3 @@
-from data.models import PAPER_TYPES, Department, Keyword
 from django import forms
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 from data.models import PAPER_TYPES, Department, Keyword
@@ -8,6 +7,8 @@ from utils.timeutil import current_year
 def year_choices():
     base_choices = [(r, r) for r in range(current_year(), 1950, -1)]
     return [('', '')] + base_choices
+
+from data.models import PAPER_TYPES, Department, Keyword
 
 
 class FilterForm(forms.Form):

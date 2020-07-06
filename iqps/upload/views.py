@@ -3,10 +3,11 @@ import logging
 import os
 import uuid
 
-from data.models import Department, Keyword, Paper
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+
+from data.models import Department, Keyword, Paper
 from iqps.settings import GDRIVE_DIRNAME, STATICFILES_DIRS
 from request.models import PaperRequest
 
