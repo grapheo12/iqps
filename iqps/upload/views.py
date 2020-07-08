@@ -38,9 +38,9 @@ def index(request):
                             dest.write(chunk)
                     if not GDRIVE_DIR_ID:
                         GDRIVE_DIR_ID = get_or_create_folder(GDRIVE_DIRNAME,
-                                                            public=True)
+                                                             public=True)
                     link = upload_file(path, "{}.pdf".format(uid),
-                                            folderId=GDRIVE_DIR_ID)
+                                       folderId=GDRIVE_DIR_ID)
                 paper = upl.save(commit=False)
                 if link is not None:
                     paper.link = link
