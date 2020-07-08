@@ -60,6 +60,7 @@ class BulkUploadForm(forms.Form):
 class UploadForm(forms.ModelForm):
     file = forms.FileField(widget=forms.ClearableFileInput,
                            label="Upload pdf")
+    file_link = forms.URLInput(label="Enter link to paper PDF, if NOT uploading file!")
     year = forms.TypedChoiceField(coerce=int, choices=year_choices,
                                   initial=current_year)
     captcha = CaptchaField()
@@ -75,7 +76,8 @@ class UploadForm(forms.ModelForm):
             'year',
             'paper_type',
             'file',
-            'keywords'
+            'keywords',
+            'link'
         ]
 
         widgets = {
@@ -90,9 +92,12 @@ class UploadForm(forms.ModelForm):
     def clean(self, *args, **kwargs):
         try:
             f = self.files.get("file")
-            assert f is not None
-            assert "pdf" in f.content_type
+            l = self.file_link
+            if f is None and l is None:
+                raise AssertionError("neither file nor link uploaded!")
+            if f is not None:
+                assert "pdf" in f.content_type
         except Exception:
-            raise forms.ValidationError("Invalid File")
+            raise forms.ValidationError("Invalid File or Link")
         finally:
             super(UploadForm, self).clean(*args, **kwargs)

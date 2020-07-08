@@ -48,6 +48,7 @@ def upload_file(local_path, remote_name, folderId=None, service=None):
     file = service.files().create(body=file_metadata,
                                   media_body=media,
                                   fields='webContentLink').execute()
+    os.remove(local_path)
     return file.get('webContentLink', None)
 
 

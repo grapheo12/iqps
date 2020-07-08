@@ -24,23 +24,24 @@ def index(request):
     upl = UploadForm()
     if request.method == "POST":
         try:
-            assert request.FILES.get('file', None) is not None
             # UploadForm is submitted
             upl = UploadForm(request.POST, request.FILES)
             if upl.is_valid():
-                path = STATICFILES_DIRS[0]
-                uid = uuid.uuid4()
-                path = os.path.join(path, "files", "{}.pdf".format(uid))
-                file = request.FILES.get('file')
-                with open(path, 'wb+') as dest:
-                    for chunk in file.chunks():
-                        dest.write(chunk)
-                if not GDRIVE_DIR_ID:
-                    GDRIVE_DIR_ID = get_or_create_folder(GDRIVE_DIRNAME,
-                                                         public=True)
+                if request.FILES.get('file') is not None:
+                    path = STATICFILES_DIRS[0]
+                    uid = uuid.uuid4()
+                    path = os.path.join(path, "files", "{}.pdf".format(uid))
+                    file = request.FILES.get('file')
+                    with open(path, 'wb+') as dest:
+                        for chunk in file.chunks():
+                            dest.write(chunk)
+                    if not GDRIVE_DIR_ID:
+                        GDRIVE_DIR_ID = get_or_create_folder(GDRIVE_DIRNAME,
+                                                            public=True)
                 paper = upl.save(commit=False)
-                paper.link = upload_file(path, "{}.pdf".format(uid),
-                                         folderId=GDRIVE_DIR_ID)
+                if paper.link is None:
+                    paper.link = upload_file(path, "{}.pdf".format(uid),
+                                             folderId=GDRIVE_DIR_ID)
                 keys_tmp = upl.cleaned_data.get("keywords")
 
                 paper.save()
@@ -49,8 +50,8 @@ def index(request):
                     paper.keywords.add(key)
 
                 paper.save()
-                LOG.info("New file uploaded: {}.pdf".format(uid))
-                messages.success(request, "File Upload Successful")
+                LOG.info("New paper added")
+                messages.success(request, "Paper Added Successful")
                 try:
                     del_key = request.POST.get('del_key', 0)
                     key = int(del_key)
@@ -59,8 +60,6 @@ def index(request):
                     LOG.info("Request {} cleared".format(key))
                 except Exception as e:
                     LOG.warning(e)
-
-                os.remove(path)
 
         except AssertionError:
             if request.user.is_staff:
