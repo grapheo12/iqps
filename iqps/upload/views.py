@@ -27,6 +27,7 @@ def index(request):
             # UploadForm is submitted
             upl = UploadForm(request.POST, request.FILES)
             if upl.is_valid():
+                link = None
                 if request.FILES.get('file') is not None:
                     path = STATICFILES_DIRS[0]
                     uid = uuid.uuid4()
@@ -38,14 +39,13 @@ def index(request):
                     if not GDRIVE_DIR_ID:
                         GDRIVE_DIR_ID = get_or_create_folder(GDRIVE_DIRNAME,
                                                             public=True)
+                    link = upload_file(path, "{}.pdf".format(uid),
+                                            folderId=GDRIVE_DIR_ID)
                 paper = upl.save(commit=False)
-                if paper.link is None:
-                    paper.link = upload_file(path, "{}.pdf".format(uid),
-                                             folderId=GDRIVE_DIR_ID)
+                if link is not None:
+                    paper.link = link
+
                 keys_tmp = upl.cleaned_data.get("keywords")
-
-                paper.save()
-
                 for key in keys_tmp:
                     paper.keywords.add(key)
 
