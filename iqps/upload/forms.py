@@ -60,7 +60,7 @@ class BulkUploadForm(forms.Form):
 class UploadForm(forms.ModelForm):
     file = forms.FileField(widget=forms.ClearableFileInput,
                            label="Upload pdf")
-    file_link = forms.URLInput(label="Link to paper, if NOT uploading file!")
+    file_link = forms.URLField(label="Link to paper, if NOT uploading file!")
     year = forms.TypedChoiceField(coerce=int, choices=year_choices,
                                   initial=current_year)
     captcha = CaptchaField()
