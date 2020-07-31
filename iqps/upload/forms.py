@@ -1,3 +1,4 @@
+import json
 import logging
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
@@ -12,6 +13,11 @@ LOG = logging.getLogger(__name__)
 def year_choices():
     return [(r, r) for r in range(current_year(), 1950, -1)]
 
+def subject_choices():
+    with open('../static/files/code_subjects.json') as f:
+        data = json.load(f)
+    code_subjects = data["code_subject"]
+    return [(i, i) for i in code_subjects]
 
 class TextSearchFieldMixin:
     search_fields = ['text__icontains']
@@ -62,6 +68,9 @@ class UploadForm(forms.ModelForm):
                            label="Upload pdf")
     year = forms.TypedChoiceField(coerce=int, choices=year_choices,
                                   initial=current_year)
+    subject = forms.TypedChoiceField(choices=subject_choices,
+                                     initial='', label="Subject",
+                                     widget=Select2Widget)
     captcha = CaptchaField()
     del_key = forms.IntegerField(label='Id (see Request Paper) resolved \
                                  by this upload (Optional)',
@@ -71,7 +80,7 @@ class UploadForm(forms.ModelForm):
         model = Paper
         fields = [
             'department',
-            'subject',
+            'subject'
             'year',
             'paper_type',
             'file',
