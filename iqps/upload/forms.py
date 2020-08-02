@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
@@ -14,10 +15,12 @@ def year_choices():
     return [(r, r) for r in range(current_year(), 1950, -1)]
 
 def subject_choices():
-    with open('../static/files/code_subjects.json') as f:
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    FILE_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json')
+    with open(FILE_PATH) as f:
         data = json.load(f)
     code_subjects = data["code_subject"]
-    return [(i, i) for i in code_subjects]
+    return [(i, i) for i in code_subjects] + [('', '')]
 
 class TextSearchFieldMixin:
     search_fields = ['text__icontains']
@@ -80,7 +83,7 @@ class UploadForm(forms.ModelForm):
         model = Paper
         fields = [
             'department',
-            'subject'
+            'subject',
             'year',
             'paper_type',
             'file',
