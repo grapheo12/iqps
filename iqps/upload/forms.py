@@ -1,9 +1,12 @@
 import json
 import logging
 import os
+import re
+from filelock import Timeout, FileLock
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
+from django.core.exceptions import ValidationError 
 
 from data.models import Paper, Keyword
 from utils.timeutil import current_year
@@ -11,16 +14,30 @@ from utils.timeutil import current_year
 LOG = logging.getLogger(__name__)
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FILE_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json')
+LOCK_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json.lock')
+lock = FileLock(lock_path, timeout=3)
+
 def year_choices():
     return [(r, r) for r in range(current_year(), 1950, -1)]
 
 def subject_choices():
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    FILE_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json')
     with open(FILE_PATH) as f:
         data = json.load(f)
     code_subjects = data["code_subject"]
     return [(i, i) for i in code_subjects] + [('', '')]
+
+def validate_custom_subject(value):
+    try:
+        subject_code = value.split("-")[0].rstrip()
+        pattern = "[A-Z][A-Z]\d{5}"
+        result = re.match(pattern, subject_code)
+        if result:
+            return value
+        raise ValidationError("Please Enter a proper Subject Code")
+    except:
+        raise ValidationError("Please Enter in the format of CODE-SUBJECT NAME")
 
 class TextSearchFieldMixin:
     search_fields = ['text__icontains']
@@ -74,6 +91,9 @@ class UploadForm(forms.ModelForm):
     subject = forms.TypedChoiceField(choices=subject_choices,
                                      initial='', label="Subject",
                                      widget=Select2Widget)
+    custom_subject = forms.CharField(required=False, label="Subject(Enter here if not found in the above list)", 
+                                    validators=[validate_custom_subject],
+                                    widget=forms.TextInput(attrs={"placeholder": "CODE-SUBJECT NAME"}))
     captcha = CaptchaField()
     del_key = forms.IntegerField(label='Id (see Request Paper) resolved \
                                  by this upload (Optional)',
@@ -84,6 +104,7 @@ class UploadForm(forms.ModelForm):
         fields = [
             'department',
             'subject',
+            'custom_subject',
             'year',
             'paper_type',
             'file',
@@ -99,6 +120,25 @@ class UploadForm(forms.ModelForm):
                           Select Others if not found)'
             }
 
+    
+    def save(self, *args, **kwargs):
+        self.subject = self.subject or self.custom_subject
+        # writting to file if a new subject
+        if self.custom_subject is not "":
+            try:
+                with lock:
+                    with open(FILE_PATH,"w") as f:
+                        data = json.load(f)
+                        code_subjects = data["code_subject"]
+                        code_subjects.append(self.customer)
+                        data = { "code_subject": code_subjects }
+                        json.dump(data, f)
+            except:
+                lock.release()
+            finally:
+                lock.release()
+        super().save(*args, **kwargs)
+        
     def clean(self, *args, **kwargs):
         try:
             f = self.files.get("file")
