@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json')
 LOCK_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json.lock')
-lock = FileLock(lock_path, timeout=3)
+lock = FileLock(LOCK_PATH, timeout=3)
 
 def year_choices():
     return [(r, r) for r in range(current_year(), 1950, -1)]
