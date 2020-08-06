@@ -134,8 +134,10 @@ class UploadForm(forms.ModelForm):
                     data = { "code_subject": code_subjects }
                     with open(FILE_PATH, "w") as f:
                         json.dump(data, f)
+                    LOG.info("New subject added {}".format(self.subject))
             except:
                 lock.release()
+                LOG.error("Error while adding a new subject {}".format(self))
         super().save(*args, **kwargs)
         
     def clean(self, *args, **kwargs):
