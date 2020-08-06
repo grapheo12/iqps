@@ -127,15 +127,14 @@ class UploadForm(forms.ModelForm):
         if self.custom_subject is not "":
             try:
                 with lock:
-                    with open(FILE_PATH,"w") as f:
+                    with open(FILE_PATH,"r") as f:
                         data = json.load(f)
-                        code_subjects = data["code_subject"]
-                        code_subjects.append(self.customer)
-                        data = { "code_subject": code_subjects }
+                    code_subjects = data["code_subject"]
+                    code_subjects.append(self.subject)
+                    data = { "code_subject": code_subjects }
+                    with open(FILE_PATH, "w") as f:
                         json.dump(data, f)
             except:
-                lock.release()
-            finally:
                 lock.release()
         super().save(*args, **kwargs)
         
