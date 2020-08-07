@@ -6,7 +6,7 @@ from filelock import Timeout, FileLock
 from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
-from django.core.exceptions import ValidationError 
+from django.core.exceptions import ValidationError
 
 from data.models import Paper, Keyword
 from utils.timeutil import current_year
@@ -15,18 +15,21 @@ LOG = logging.getLogger(__name__)
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILE_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json')
-LOCK_PATH = os.path.join(BASE_DIR, 'static/files/code_subjects.json.lock')
+FILE_PATH = os.path.join(BASE_DIR, "static/files/code_subjects.json")
+LOCK_PATH = os.path.join(BASE_DIR, "static/files/code_subjects.json.lock")
 lock = FileLock(LOCK_PATH, timeout=3)
+
 
 def year_choices():
     return [(r, r) for r in range(current_year(), 1950, -1)]
+
 
 def subject_choices():
     with open(FILE_PATH) as f:
         data = json.load(f)
     code_subjects = data["code_subject"]
-    return [(i, i) for i in code_subjects] + [('', '')]
+    return [(i, i) for i in code_subjects] + [("", "")]
+
 
 def validate_custom_subject(value):
     try:
@@ -39,8 +42,9 @@ def validate_custom_subject(value):
     except:
         raise ValidationError("Please Enter in the format of CODE-SUBJECT NAME")
 
+
 class TextSearchFieldMixin:
-    search_fields = ['text__icontains']
+    search_fields = ["text__icontains"]
 
 
 class KeywordSelect2TagWidget(TextSearchFieldMixin, ModelSelect2TagWidget):
@@ -51,8 +55,7 @@ class KeywordSelect2TagWidget(TextSearchFieldMixin, ModelSelect2TagWidget):
         self.get_queryset().create(text=value)
 
     def value_from_datadict(self, data, files, name):
-        values = ModelSelect2TagWidget.value_from_datadict(self, data,
-                                                           files, name)
+        values = ModelSelect2TagWidget.value_from_datadict(self, data, files, name)
         pks = []
         for val in values:
             key_id = None
@@ -68,8 +71,9 @@ class KeywordSelect2TagWidget(TextSearchFieldMixin, ModelSelect2TagWidget):
 
 
 class BulkUploadForm(forms.Form):
-    bulk_file = forms.FileField(widget=forms.ClearableFileInput,
-                                label="Upload json file (within 30MB)")
+    bulk_file = forms.FileField(
+        widget=forms.ClearableFileInput, label="Upload json file (within 30MB)"
+    )
 
     def clean(self, *args, **kwargs):
         try:
@@ -84,54 +88,55 @@ class BulkUploadForm(forms.Form):
 
 
 class UploadForm(forms.ModelForm):
-    file = forms.FileField(widget=forms.ClearableFileInput,
-                           label="Upload pdf")
-    year = forms.TypedChoiceField(coerce=int, choices=year_choices,
-                                  initial=current_year)
-    subject = forms.TypedChoiceField(choices=subject_choices,
-                                     initial='', label="Subject",
-                                     widget=Select2Widget)
-    custom_subject = forms.CharField(required=False, label="Subject(Enter here if not found in the above list)", 
-                                    validators=[validate_custom_subject],
-                                    widget=forms.TextInput(attrs={"placeholder": "CODE-SUBJECT NAME"}))
+    file = forms.FileField(widget=forms.ClearableFileInput, label="Upload pdf")
+    year = forms.TypedChoiceField(
+        coerce=int, choices=year_choices, initial=current_year
+    )
+    subject = forms.TypedChoiceField(
+        choices=subject_choices, initial="", label="Subject", widget=Select2Widget
+    )
+    custom_subject = forms.CharField(
+        required=False,
+        label="Subject(Enter here if not found in the above list)",
+        validators=[validate_custom_subject],
+        widget=forms.TextInput(attrs={"placeholder": "CODE-SUBJECT NAME"}),
+    )
     captcha = CaptchaField()
-    del_key = forms.IntegerField(label='Id (see Request Paper) resolved \
-                                 by this upload (Optional)',
-                                 required=False)
+    del_key = forms.IntegerField(
+        label="Id (see Request Paper) resolved \
+                                 by this upload (Optional)",
+        required=False,
+    )
 
     class Meta:
         model = Paper
         fields = [
-            'department',
-            'subject',
-            'custom_subject',
-            'year',
-            'paper_type',
-            'file',
-            'keywords'
+            "department",
+            "subject",
+            "custom_subject",
+            "year",
+            "paper_type",
+            "file",
+            "keywords",
         ]
 
-        widgets = {
-            'keywords': KeywordSelect2TagWidget,
-            'department': Select2Widget
-            }
+        widgets = {"keywords": KeywordSelect2TagWidget, "department": Select2Widget}
         labels = {
-            'department': 'Department (Prefer 2 letter codes. \
-                          Select Others if not found)'
-            }
+            "department": "Department (Prefer 2 letter codes. \
+                          Select Others if not found)"
+        }
 
-    
     def save(self, *args, **kwargs):
         self.subject = self.subject or self.custom_subject
         # writting to file if a new subject
         if self.custom_subject is not "":
             try:
                 with lock:
-                    with open(FILE_PATH,"r") as f:
+                    with open(FILE_PATH, "r") as f:
                         data = json.load(f)
                     code_subjects = data["code_subject"]
                     code_subjects.append(self.subject)
-                    data = { "code_subject": code_subjects }
+                    data = {"code_subject": code_subjects}
                     with open(FILE_PATH, "w") as f:
                         json.dump(data, f)
                     LOG.info("New subject added {}".format(self.subject))
@@ -139,7 +144,7 @@ class UploadForm(forms.ModelForm):
                 lock.release()
                 LOG.error("Error while adding a new subject {}".format(self))
         super().save(*args, **kwargs)
-        
+
     def clean(self, *args, **kwargs):
         try:
             f = self.files.get("file")

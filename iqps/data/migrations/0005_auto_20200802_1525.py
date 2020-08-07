@@ -8,13 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0004_auto_20200501_1416'),
+        ("data", "0004_auto_20200501_1416"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='paper',
-            name='year',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(1951), data.models.max_value_current_year]),
+            model_name="paper",
+            name="year",
+            field=models.IntegerField(
+                validators=[
+                    django.core.validators.MinValueValidator(1951),
+                    data.models.max_value_current_year,
+                ]
+            ),
         ),
     ]
