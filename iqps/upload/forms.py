@@ -7,8 +7,9 @@ from django import forms
 from django_select2.forms import ModelSelect2TagWidget, Select2Widget
 from captcha.fields import CaptchaField
 from django.core.exceptions import ValidationError
+from django_select2 import forms as s2forms
 
-from data.models import Paper, Keyword
+from data.models import Paper, Keyword, Department
 from utils.timeutil import current_year
 
 LOG = logging.getLogger(__name__)
@@ -86,14 +87,14 @@ class BulkUploadForm(forms.Form):
         finally:
             super(BulkUploadForm, self).clean(*args, **kwargs)
 
-
 class UploadForm(forms.ModelForm):
     file = forms.FileField(widget=forms.ClearableFileInput, label="Upload pdf")
     year = forms.TypedChoiceField(
         coerce=int, choices=year_choices, initial=current_year
     )
     subject = forms.TypedChoiceField(
-        choices=subject_choices, initial="", label="Subject", widget=Select2Widget
+        choices=subject_choices, initial="", label="Subject", widget=Select2Widget,
+        required=False
     )
     custom_subject = forms.CharField(
         required=False,
@@ -107,7 +108,9 @@ class UploadForm(forms.ModelForm):
                                  by this upload (Optional)",
         required=False,
     )
-
+    
+    department = forms.ModelChoiceField(queryset=Department.objects.all(),
+                                        widget=Select2Widget)
     class Meta:
         model = Paper
         fields = [
@@ -120,36 +123,34 @@ class UploadForm(forms.ModelForm):
             "keywords",
         ]
 
-        widgets = {"keywords": KeywordSelect2TagWidget, "department": Select2Widget}
+        widgets = {
+            "keywords": KeywordSelect2TagWidget,
+        }
         labels = {
             "department": "Department (Prefer 2 letter codes. \
                           Select Others if not found)"
         }
-
-    def save(self, *args, **kwargs):
-        self.subject = self.subject or self.custom_subject
-        # writting to file if a new subject
-        if self.custom_subject is not "":
-            try:
-                with lock:
-                    with open(FILE_PATH, "r") as f:
-                        data = json.load(f)
-                    code_subjects = data["code_subject"]
-                    code_subjects.append(self.subject)
-                    data = {"code_subject": code_subjects}
-                    with open(FILE_PATH, "w") as f:
-                        json.dump(data, f)
-                    LOG.info("New subject added {}".format(self.subject))
-            except:
-                lock.release()
-                LOG.error("Error while adding a new subject {}".format(self))
-        super().save(*args, **kwargs)
 
     def clean(self, *args, **kwargs):
         try:
             f = self.files.get("file")
             assert f is not None
             assert "pdf" in f.content_type
+            # writting to file if a new subject
+            if self.cleaned_data['custom_subject'] is not "":
+                try:
+                    with lock:
+                        with open(FILE_PATH, "r") as f:
+                            data = json.load(f)
+                        code_subjects = data["code_subject"]
+                        code_subjects.append(self.cleaned_data['custom_subject'])
+                        data = {"code_subject": list(set(code_subjects))}
+                        with open(FILE_PATH, "w") as f:
+                            json.dump(data, f)
+                        LOG.info("New subject added {}".format(self.cleaned_data['custom_subject']))
+                except Exception as e:
+                    lock.release()
+                    LOG.error("Error while adding a new subject {}".format(e))
         except Exception:
             raise forms.ValidationError("Invalid File")
         finally:
