@@ -41,7 +41,7 @@ services:
     networks:
       main-network:
       external:
-        nginx_network:
+        name: nginx_network
     depends_on:
       - db    
     
