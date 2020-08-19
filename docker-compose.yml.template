@@ -5,16 +5,6 @@ networks:
 
 
 services:
-  nginx:
-    build: ./nginx
-    volumes:
-      - local_static_root_path:/var/www/static/
-    ports:
-      - "8001:8001"
-    networks:
-      main-network:
-    depends_on:
-      - web
   db:
     image: mariadb:latest
     restart: always
@@ -38,6 +28,9 @@ services:
       - local_log_path:/var/log/iqps/
     networks:
       main-network:
+      nginx_network:
+        aliases:
+          - iqps_web
     depends_on:
       - db
   backup:
@@ -47,6 +40,8 @@ services:
        DROPBOX_ACCESS_TOKEN: 'DROPBOX_TOKEN'
     networks:
       main-network:
+      external:
+        nginx_network:
     depends_on:
       - db    
     
