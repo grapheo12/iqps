@@ -2,20 +2,17 @@ version: '3'
 
 networks:
   main-network:
-  external:
-    name: nginx_network
-
+  nginx-network:
 
 services:
   nginx:	
+    container_name: 'iqps-nginx'
     build: ./nginx	
     volumes:	
       - local_static_root_path:/var/www/static/	
-    ports:	
-      - "8001:8001"	
     networks:	
       main-network:	
-      nginx_network:
+      nginx-network:
     depends_on:	
       - web
   db:
