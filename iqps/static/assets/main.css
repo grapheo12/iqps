@@ -63,7 +63,7 @@ body{
     outline: 0;
 }
 #searchbar:focus{
-    border-color: blue;
+    border-color: lime;
 }
 
 .gray-text{
@@ -106,7 +106,7 @@ body{
 
 .result-keywords{
     font-family: monospace;
-    color: navy;
+    color: lime;
 }
 
 
