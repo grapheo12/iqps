@@ -18,7 +18,7 @@ def reportPaper(request, paperId):
         return render(request, "reportform.html", {
             "form": ReportForm(),
             "paper": paper,
-            "login_req":os.environ['LOGIN_REQUIRED']
+            "login_req": os.environ['LOGIN_REQUIRED']
         })
     except Exception:
         if form is None:
@@ -26,5 +26,5 @@ def reportPaper(request, paperId):
         return render(request, "reportform.html", {
             "form": form,
             "paper": paper,
-            "login_req":os.environ['LOGIN_REQUIRED']
+            "login_req": os.environ['LOGIN_REQUIRED']
         })

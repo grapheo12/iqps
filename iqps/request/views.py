@@ -26,6 +26,6 @@ def paperRequest(request):
     ctx = {
             'form': RequestForm(),
             'reqs': reqarr,
-            "login_req":os.environ['LOGIN_REQUIRED']
+            "login_req": os.environ['LOGIN_REQUIRED']
           }
     return render(request, "requestpage.html", ctx)
