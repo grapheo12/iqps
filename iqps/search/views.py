@@ -103,7 +103,7 @@ def bitapSearch(subject, year=0, department="", paper_type="", keywords=""):
             """
             SELECT p.subject, p.year, d.code, p.paper_type, p.link, p.id
             FROM papers p JOIN departments d ON p.department_id = d.id
-            WHERE bitap(p.subject, '{}') = 1 {} {} {}
+            WHERE bitap(LOWER(p.subject), LOWER('{}')) = 1 {} {} {}
             ORDER BY year DESC LIMIT 30;
             """.format(subject, year_filter, dep_filter, type_filter)
     else:
@@ -119,7 +119,7 @@ def bitapSearch(subject, year=0, department="", paper_type="", keywords=""):
                 JOIN keywords AS k ON pk.keyword_id = k.id
             ) AS kt
             ON p.id = kt.paper_id
-            WHERE bitap(p.subject, '{}') = 1 {} {} {} {}
+            WHERE bitap(LOWER(p.subject), LOWER('{}')) = 1 {} {} {} {}
             ORDER BY p.year DESC LIMIT 30;
             """.format(subject, year_filter, dep_filter,
                        type_filter, keyword_filter)
