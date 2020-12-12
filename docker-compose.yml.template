@@ -16,7 +16,7 @@ services:
     depends_on:
       - web
   db:
-    image: mariadb:latest
+    image: mariadb-udf
     restart: always
     networks:
       main-network:
