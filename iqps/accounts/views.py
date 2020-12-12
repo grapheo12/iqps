@@ -26,7 +26,7 @@ def loginView(request):
 
     context = {
         "form": form,
-        "login_req":os.environ['LOGIN_REQUIRED'],
+        "login_req":os.environ['LOGIN_REQUIRED']
     }
 
     return render(request, "login.html", context)
@@ -60,7 +60,7 @@ def signupView(request):
 
     context = {
         "form": form,
-        "login_req":os.environ['LOGIN_REQUIRED'],
+        "login_req":os.environ['LOGIN_REQUIRED']
     }
 
     return render(request, "register.html", context)
