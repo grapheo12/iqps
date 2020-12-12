@@ -1,10 +1,10 @@
 echo -e
 
 #Check if required commands are present or not
-if (command -v python3) && (command -v docker) && (command -v docker-compose) && (command -v sed) && (command -v cp); then
+if (command -v python3) && (command -v docker) && (command -v docker-compose) && (command -v sed) && (command -v cp) && (command -v make) && (command -v g++); then
     echo "All commands exists"
 else
-    echo "Make sure python3, docker, docker-compose, cp and sed are in your PATH"
+    echo "Make sure python3, docker, docker-compose, cp, sed, make and g++ are in your PATH"
 fi
 
 #Check if credentials and token are present or not
