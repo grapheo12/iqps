@@ -85,6 +85,7 @@ def _search(subject, year=0, department="", paper_type="", keywords=""):
 
     return results
 
+
 def bitapSearch(subject, year=0, department="", paper_type="", keywords=""):
     year_filter = "AND p.year = {}".format(year) if year > 0 else ""
     dep_filter = "AND d.code = '{}'".format(department)\
@@ -130,6 +131,7 @@ def bitapSearch(subject, year=0, department="", paper_type="", keywords=""):
             results.append(row)
 
     return results
+
 
 def hitSearch(request):
     """
