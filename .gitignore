@@ -1,7 +1,6 @@
 venv
 __pycache__
 *.cnf
-*.env
 *.swp
 credentials.json
 token.pickle
