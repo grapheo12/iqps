@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block extra_head %}
-    {% if not user.is_authenticated %}
-            <meta http-equiv="refresh" content="0; url='/'" />
+    {% if login_req %}
+        {% if not user.is_authenticated %}
+                <meta http-equiv="refresh" content="0; url='/'" />
+        {% endif %}
     {% endif %}
 {% endblock %}
 
