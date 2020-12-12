@@ -16,7 +16,7 @@ services:
     depends_on:
       - web
   db:
-    image: mariadb-udf
+    build: ./mariadb-udf-docker
     restart: always
     networks:
       main-network:
