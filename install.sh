@@ -148,11 +148,8 @@ do
             break        
         fi
     done < "$input"
-    echo $seen;
     if [ $seen -eq 1 ]; then
-        break;grep -q "$SUB" <<< "$STR"
-    else
-        echo "Still not there. Trying again";
+        break;
     fi
 done
 
