@@ -34,7 +34,6 @@ else
 
     echo "You might want to run this script again to complete the installation once you have moved the files to the app server."
     echo "Just re-run here if you want to setup a localhost"
-    exit
 fi
 
 echo "Building mariadb-udf image"
@@ -45,6 +44,10 @@ echo "Generating docker-compose.yml and app.env"
 
 cp docker-compose.yml.template docker-compose.yml
 cp iqps/conf/app.env.template iqps/conf/app.env
+
+sed -i '43,51d' docker-compose.yml
+sed -i '17 a \ \ \ \ ports:' docker-compose.yml
+sed -i '18 a \ \ \ \ \ \ - 8000:80' docker-compose.yml
 
 CONF_PATH="iqps/conf/app.env"
 
@@ -120,6 +123,66 @@ echo "When output says DB is ready to receive connections, hit CTRL+C and move o
 
 sleep 5 #So that user reads the above lines properly
 
-docker-compose up
+gnome-terminal -- docker-compose up
 
+if test -f ".log.txt"; then
+    sed -i 's/mysqld: ready for connections/mysqld: was ready for connections/gI' .log.txt
+else
+    docker-compose logs --no-color > ".log.txt";
+    sed -i 's/mysqld: ready for connections/mysqld: was ready for connections/gI' .log.txt
+fi
+
+lines=0
+seen=0
+while [ $seen -eq 0 ]
+do
+    sleep 5
+    docker-compose logs --no-color > ".log.txt";
+    input=".log.txt";
+    STR="mysqld: ready for connections";
+    while IFS= read -r line
+    do
+        if grep -q "$STR" <<< "$line"; then
+            echo "It is there. You can exit!";
+            seen=1
+            break        
+        fi
+    done < "$input"
+    echo $seen;
+    if [ $seen -eq 1 ]; then
+        break;grep -q "$SUB" <<< "$STR"
+    else
+        echo "Still not there. Trying again";
+    fi
+done
+
+if [ $seen -eq 1 ]; then
+    echo "Killing docker-compose!";
+    docker-compose stop;
+fi
+
+echo "Starting app"
+docker-compose up -d
+
+echo "Running Database Migrations"
+
+docker-compose run web python manage.py migrate --skip-checks
+
+echo "Creating Django superuser"
+
+docker-compose run web python manage.py createsuperuser
+
+echo "Saving Static Files"
+
+docker-compose run web python manage.py collectstatic
+
+echo "Initiation completed successfully"
+echo "Shutting down containers"
+
+docker-compose down
+
+echo "To run the app, run in this directory:"
+echo 'docker-compose up -d'
+
+rm .log.txt
 
