@@ -119,11 +119,10 @@ docker-compose build
 
 echo "Running for the first time... Creates all required volumes"
 echo "Takes 5-10 minutes... Have patience :-)"
-echo "When output says DB is ready to receive connections, hit CTRL+C and move on to run init.sh"
 
 sleep 5 #So that user reads the above lines properly
 
-gnome-terminal -- docker-compose up
+docker-compose up -d
 
 if test -f ".log.txt"; then
     sed -i 's/mysqld: ready for connections/mysqld: was ready for connections/gI' .log.txt
