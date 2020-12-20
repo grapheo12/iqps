@@ -341,4 +341,3 @@ echo "To run the app, run in this directory:"
 echo 'docker-compose up -d'
 
 rm .log.txt
-

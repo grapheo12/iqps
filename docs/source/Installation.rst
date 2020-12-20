@@ -1,6 +1,8 @@
 Installation
 ############
 
+If you are installing on Windows then it is recommended to first install Windows Subsystem for Linux(WSL). Then install Linux distribution of your choice. Rest of the steps are same as for installing it on a Linux machine.
+
 Installation can be easily done using Docker.
 
 Source Installation is a lengthy process, the notes for the same are `here <SourceInstall.html>`_.
@@ -35,6 +37,8 @@ Steps
 
     ./install.sh
 
+Use sudo with the above command if there is an error executing the above command.
+
 This will ask for app permissions. Sign in with the account you used in step-3. Accept all risks.
 
 #. You can move the project folder to the intended app server now, or (for development) you can keep it in the local machine.
@@ -61,6 +65,7 @@ Then kill the process by hitting ``CTRL+C``.
 
     docker-compose up -d
 
+Use sudo docker-compose up -d if there is a problem executing the above command.
 #. You can also stop the service by running:
 
    .. code-block:: bash
