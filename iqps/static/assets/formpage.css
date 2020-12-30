@@ -21,24 +21,24 @@ html, body{
     flex-direction: column;
     justify-content: center;
     
-    background-color: white;
+    background-color:#5eff9d;
     
-    border-color: black;
-    border-width: 2px;
+    border-color: #d9d8d8;
+    border-width: 0px;
     border-style: solid;
 
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 36px;
+    padding-bottom: 35px;
     
 }
 
 .submit-btn{
-    margin-top: 5px;
-    margin-top: 5px;
-    background-color: rgb(16, 165, 224);
-    color: rgb(210, 224, 16);
+    margin-top: 20px;
+    margin-bottom: 17px;
+    background-color: #0062cc;
+    color: rgb(255, 255, 255);
     font-weight: bold;
     display: block;
     padding-top: 5px;
@@ -46,16 +46,16 @@ html, body{
     width: max-content;
     margin-left: auto;
     margin-right: auto;
-    border-width: 1px;
-    border-color: rgb(36, 7, 250);
+    border-width: 0px;
+    border-color: #0062cc;
     outline: 0;
 }
 
 label, small, .errorlist{
     font-family: Monospace;
-    color: red;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    color: black;
+    padding-top: 12px;
+    padding-bottom: 18px;
 
     list-style-type: none;
 }
@@ -69,7 +69,7 @@ input{
     border-width: 1px;
     border-style: solid;
     border-color: black;
-    padding-bottom: 5px;
+    padding-bottom: 12px;
 }
 
 .helptext{
@@ -80,4 +80,11 @@ input{
 .captcha{
     width: max-content;
     margin: auto;
+}
+
+.header {
+      text-align: center;
+    }
+.stext {
+    text-align: center;
 }
