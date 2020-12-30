@@ -57,7 +57,7 @@ body{
     margin: auto;
     border-width: 2px;
     border-style: solid;
-    border-color: rgb(8, 5, 37);
+    border-color: rgb(200, 200, 200);
     font-size: 22px;
     padding: 8px;
     overflow: hidden;
@@ -109,5 +109,3 @@ body{
     font-family: monospace;
     color: navy;
 }
-
-
