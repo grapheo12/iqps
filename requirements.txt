@@ -12,7 +12,7 @@ django-filter==2.2.0
 django-ranged-response==0.2.0
 django-select2==7.2.3
 django-simple-captcha==0.5.12
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 docutils==0.16
 download==0.3.4
 fuzzywuzzy==0.18.0
