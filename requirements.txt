@@ -27,7 +27,7 @@ httplib2==0.17.1
 idna==2.9
 imagesize==1.2.0
 Jinja2==2.11.2
-joblib==0.14.1
+joblib==1.2.0
 Markdown==3.2.1
 MarkupSafe==1.1.1
 mysqlclient==1.4.6
